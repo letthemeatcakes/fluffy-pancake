@@ -1,0 +1,284 @@
+{
+  "name": "Get Dataset",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "id": "5c3f3b0c-c77e-43e1-8dc6-f515e826dce5",
+      "typeVersion": 1.1,
+      "name": "Start",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        -1904,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f4075f36-bb05-45b7-895c-5f8e44a690ee",
+              "name": "video.caption",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "0eb4a049-05f9-4ebb-9495-bc4cae558d7f",
+              "name": "video.webVideoUrl",
+              "value": "={{ $json.webVideoUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "52e5cbc1-63aa-490d-bd34-5838f8d4aedd",
+              "name": "video.videoMeta.coverUrl",
+              "value": "={{ $json.videoMeta.coverUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "1733cb52-29ba-4a7e-a170-35845cd6db16",
+              "name": "video.diggCount",
+              "value": "={{ $json.diggCount }}",
+              "type": "number"
+            },
+            {
+              "id": "383304ba-6c92-4573-9927-ef79d82f9ae2",
+              "name": "video.playCount",
+              "value": "={{ $json.playCount }}",
+              "type": "number"
+            },
+            {
+              "id": "36fd8fd3-e229-4971-b5d2-94fb01eb8d91",
+              "name": "video.shareCount",
+              "value": "={{ $json.shareCount }}",
+              "type": "number"
+            },
+            {
+              "id": "3f1a4ca8-ec9b-4616-ac2c-d8a032e24acc",
+              "name": "video.commentCount",
+              "value": "={{ $json.commentCount }}",
+              "type": "number"
+            },
+            {
+              "id": "f04971e6-5c47-4ed1-ba77-334bd6028e45",
+              "name": "video.collectCount",
+              "value": "={{ $json.collectCount }}",
+              "type": "number"
+            },
+            {
+              "id": "93642425-83b4-49df-bff5-d8abfe9d406c",
+              "name": "author.authorMeta.profileUrl",
+              "value": "={{ $json.authorMeta.profileUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "a8d3c9c5-7d9c-4df9-bd6c-dd145113ec90",
+              "name": "author.authorMeta.name",
+              "value": "={{ $json.authorMeta.name }}",
+              "type": "string"
+            },
+            {
+              "id": "135e33d3-7b9d-4942-a11b-8dfae0e4ea7e",
+              "name": "author.authorMeta.fans",
+              "value": "={{ $json.authorMeta.fans }}",
+              "type": "number"
+            },
+            {
+              "id": "b5281b1c-6e09-4c38-8bde-d80014ebb609",
+              "name": "author.authorMeta.heart",
+              "value": "={{ $json.authorMeta.heart }}",
+              "type": "number"
+            },
+            {
+              "id": "0e4a3760-158c-4910-b711-65275b410fca",
+              "name": "author.authorMeta.video",
+              "value": "={{ $json.authorMeta.video }}",
+              "type": "number"
+            },
+            {
+              "id": "2753db7a-b30e-4085-bead-1f0fcc562973",
+              "name": "author.musicMeta.musicName",
+              "value": "={{ $json.musicMeta.musicName }}",
+              "type": "string"
+            },
+            {
+              "id": "ac85b7e0-6d59-4061-a9d3-d723c9cf282a",
+              "name": "video.hashtags",
+              "value": "={{ $json.hashtags }}",
+              "type": "array"
+            },
+            {
+              "id": "a4661147-4949-41da-b527-7a062efeb6c6",
+              "name": "musicMeta.musicName",
+              "value": "={{ $json.musicMeta.musicName }}",
+              "type": "string"
+            },
+            {
+              "id": "63e9c9d6-eb8d-4871-8026-54940a8d3a97",
+              "name": "task.searchHashtag",
+              "value": "={{ $json.searchHashtag }}",
+              "type": "object"
+            },
+            {
+              "id": "106889d8-caa0-4961-9d4b-0904d86d092d",
+              "name": "task.dateTime",
+              "value": "={{ $now }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1328,
+        512
+      ],
+      "id": "3c58c785-1d7a-47a1-8f00-4ff811017874",
+      "name": "CleanUp"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.message.text }}/items ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1568,
+        592
+      ],
+      "id": "36fa3b06-2aeb-4be0-baf5-da4e9ec7e980",
+      "name": "GET Apify dataset",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst updatedItems = items.map((item) => {\n  const text = item?.json?.message?.text;\n  if (text.includes(\"/datasetwrite\")) {\n    item.json.message.text = text.replace(\n      \"/datasetwrite \",\n      \"\",\n    );\n  } else if (text.includes(\"/datasetvids\")) {\n    item.json.message.text = text.replace(\n      \"/datasetvids \",\n      \"\",\n    );\n  }\n  return item;\n});\nreturn updatedItems;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1744,
+        592
+      ],
+      "id": "27cf93aa-bd76-46a4-ac5c-c6d5ce468d7b",
+      "name": "Extract Dataset Name from message"
+    },
+    {
+      "parameters": {
+        "chatId": "481869952",
+        "text": "Упс! Api call с ошибкой",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1328,
+        720
+      ],
+      "id": "cd09d81c-1f74-4d52-8505-94d37bb7b0eb",
+      "name": "Error Message",
+      "webhookId": "a30f595f-4eef-44df-9905-7a906e7803e0",
+      "credentials": {
+        "telegramApi": {
+          "id": "jq34N7lrc5lInbfO",
+          "name": "AyoBot"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Start": [
+      {
+        "json": {
+          "update_id": 211772842,
+          "message": {
+            "message_id": 876,
+            "from": {
+              "id": 481869952,
+              "is_bot": false,
+              "first_name": "Егор",
+              "username": "addadddaddda",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 481869952,
+              "first_name": "Егор",
+              "username": "addadddaddda",
+              "type": "private"
+            },
+            "date": 1756716353,
+            "text": "/datasetwrite 6yjlWxv22fD4OrLi5",
+            "entities": [
+              {
+                "offset": 0,
+                "length": 13,
+                "type": "bot_command"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Start": {
+      "main": [
+        [
+          {
+            "node": "Extract Dataset Name from message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Apify dataset": {
+      "main": [
+        [
+          {
+            "node": "CleanUp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Dataset Name from message": {
+      "main": [
+        [
+          {
+            "node": "GET Apify dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CleanUp": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bf11a581-2650-45ab-9f6b-e4ca35dc924c",
+  "meta": {
+    "instanceId": "b943184095dfc4d4d319344736df6581b096cb6f38c83812941bcbebc032125d"
+  },
+  "id": "aDcrjBINgq9ADUQ0",
+  "tags": []
+}

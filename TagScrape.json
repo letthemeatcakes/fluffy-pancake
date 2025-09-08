@@ -1,0 +1,2313 @@
+{
+  "name": "TagScrape",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c5252e06-fb1a-4278-8f65-fd4513dfc32f",
+              "name": "message.URL",
+              "value": "={{ $json.video.webVideoUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "222f8224-8dde-452f-9a5d-e42a647de6f7",
+              "name": "message.engageScore",
+              "value": "={{ $json.metrics.engageScore }}",
+              "type": "number"
+            },
+            {
+              "id": "b9a2b374-340c-4e77-b40c-df8baec74f90",
+              "name": "message.playCount",
+              "value": "={{ $json.video.playCount }}",
+              "type": "number"
+            },
+            {
+              "id": "586d30b3-357c-4364-908c-53673eae0ce7",
+              "name": "message.timeAdjustedVirality",
+              "value": "={{ $json.metrics.timeAdjustedVirality }}",
+              "type": "number"
+            },
+            {
+              "id": "a8fc61de-6df7-4e9d-bcdc-0c460d293104",
+              "name": "message.replicabilityScore",
+              "value": "={{ $json.metrics.replicabilityScore }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -64,
+        1088
+      ],
+      "id": "85008fd4-4c38-4039-9c9d-836542aa92cf",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "481869952",
+        "text": "={{ $json.message.URL }} engagement: {{ $json.message.engageScore }} views: {{ $json.message.playCount }} TimeVir {{ $json.message.timeAdjustedVirality }} replicability {{ $json.message.replicabilityScore }}",
+        "replyMarkup": "forceReply",
+        "forceReply": {},
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        1216
+      ],
+      "id": "4634b02f-8c0b-46bb-98d1-da0d69368d7f",
+      "name": "Send a text message",
+      "webhookId": "faea0fbc-30f6-4220-8f59-27fb5288b0d5",
+      "credentials": {
+        "telegramApi": {
+          "id": "jq34N7lrc5lInbfO",
+          "name": "AyoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        1312
+      ],
+      "id": "be097f5a-b0af-4879-a1d4-ee59199f2692",
+      "name": "Wait",
+      "webhookId": "8e97ee0d-5ae5-479b-80a7-b55bb6544338"
+    },
+    {
+      "parameters": {
+        "batchSize": 20,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        80,
+        1088
+      ],
+      "id": "425db5be-26c0-42da-bb4c-620aae7e0b7b",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2240,
+        1632
+      ],
+      "id": "23fce399-3409-456d-8440-1a15e4ad1411",
+      "name": "Telegram Trigger",
+      "webhookId": "0ba5df98-6c72-4288-87a3-dd4310f2361e",
+      "credentials": {
+        "telegramApi": {
+          "id": "jq34N7lrc5lInbfO",
+          "name": "AyoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/datasetid",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c34bfc0c-c271-43c6-ab60-ddffefbdf8f2"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "cb9c9a4f-5b28-427e-91fb-fac4f1a6f615",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/datasetvids",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5e9709da-2cee-4a84-94fd-4fc7b5946ba5",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/datasetwrite",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4a1e4047-ee1f-42bb-83bf-a30b4e6e387a",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/taskstart",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "46f0e91a-043d-45b4-aa6c-86463f332522",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notStartsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1776,
+        1648
+      ],
+      "id": "3728028e-f3cf-4398-889a-c793abd454a2",
+      "name": "Command Switch",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "Привет! ",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2064,
+        2608
+      ],
+      "id": "541d7f97-de8a-4dc4-90e3-9e2c3cf69400",
+      "name": "Send Greeting",
+      "webhookId": "16191e96-73b1-45c4-bdf2-84fecf7d0d61",
+      "credentials": {
+        "telegramApi": {
+          "id": "jq34N7lrc5lInbfO",
+          "name": "AyoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "Access Forbidden",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2032,
+        1776
+      ],
+      "id": "fade1df6-1534-4270-9b62-2c3803609bdc",
+      "name": "Access Forbidden",
+      "webhookId": "16191e96-73b1-45c4-bdf2-84fecf7d0d61",
+      "credentials": {
+        "telegramApi": {
+          "id": "jq34N7lrc5lInbfO",
+          "name": "AyoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/clockworks~tiktok-hashtag-scraper/run-sync-get-dataset-items?token=apify_api_5CMsclkCHEkpwHGvn8IVKOht9uXiMB0HLNtt",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"hashtags\": [\n        \"ai\",\n        \"fyp\",\n        \"fyp ai\"\n    ],\n    \"resultsPerPage\": 60,\n    \"shouldDownloadCovers\": false,\n    \"shouldDownloadSlideshowImages\": false,\n    \"shouldDownloadSubtitles\": false,\n    \"shouldDownloadVideos\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -720,
+        2720
+      ],
+      "id": "b6db1111-35ea-4b05-9e42-af500d48d435",
+      "name": "ApifyTask"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ba018b0d-6630-428e-a790-6114bba78041",
+              "leftValue": "={{ $json.message.from.id }}",
+              "rightValue": 481869952,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2128,
+        1632
+      ],
+      "id": "a7c50d98-0717-419d-bd29-24a10e4de0c5",
+      "name": "Check ID (Security)"
+    },
+    {
+      "parameters": {
+        "content": "Получение датасетов напрямую из apify, отправка видео  в телеграм "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -128,
+        976
+      ],
+      "typeVersion": 1,
+      "id": "1e504b62-cb30-4ed0-9849-9117e92caab3",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/datasets?token=apify_api_5CMsclkCHEkpwHGvn8IVKOht9uXiMB0HLNtt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1712,
+        784
+      ],
+      "id": "ac5516f0-4746-42a1-88b4-067d012a101d",
+      "name": "Appify Get IDs"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=Привет! Вот датасеты  {{ $json.result }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1360,
+        784
+      ],
+      "id": "5febbde1-2a13-4624-8e22-745b3f47bc0a",
+      "name": "Send Datasets IDs",
+      "webhookId": "16191e96-73b1-45c4-bdf2-84fecf7d0d61",
+      "credentials": {
+        "telegramApi": {
+          "id": "jq34N7lrc5lInbfO",
+          "name": "AyoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst result = items\n  .map((item) => item.json)\n  .map(({ data: { items } }) => items.map(({ id, name }) => `${id} ${name}`))\n  .join(\", \");\nreturn { result };\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1536,
+        784
+      ],
+      "id": "8de2e71a-c3d8-4cb0-89fc-055b12601c5a",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "aDcrjBINgq9ADUQ0",
+          "mode": "list",
+          "cachedResultName": "Get Dataset"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -848,
+        1024
+      ],
+      "name": "Call Get Dataset",
+      "id": "87e5e891-b805-4de7-a328-6c1a0aa4c7cf"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "aDcrjBINgq9ADUQ0",
+          "mode": "list",
+          "cachedResultName": "Get Dataset"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -960,
+        1664
+      ],
+      "name": "Call Get Dataset1",
+      "id": "7aeac8a1-497a-4df8-9a23-9f5199f62cb5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all input items\nconst inputItems = $input.all();\n\n// Process each item\nconst outputItems = inputItems.map(item => {\n    const data = item.json;\n    \n    // Extract metrics from input data\n    const lik = data.video.diggCount || 0;\n    const shars = data.video.shareCount || 0;\n    const views = data.video.playCount || 0;\n    const collect = data.video.collectCount || 0;\n    const coms = data.video.commentCount || 0;\n    const subs = data.author.authorMeta.fans || 0;\n    const hearts = data.author.authorMeta.heart || 0;\n    const vids = data.author.authorMeta.video || 0;\n    \n    // Calculate all metrics\n    const engageScore = (lik * 0.6) + (coms * 0.9) + (shars * 1.7) + (collect * 0.9);\n    const shareRate = Math.log(shars + 1) / Math.log(views + 1);\n    const creatorSizeFactor = Math.log(subs + 1) * Math.sqrt(vids + 1);\n    const authorEngagementRatio = (hearts / vids) / (subs + 1);\n    const estimatedAgeFactor = Math.log(views / (subs * authorEngagementRatio) + 1);\n    const rawVirality = (engageScore * shareRate * Math.log(views + 1)) / creatorSizeFactor;\n    const timeAdjustedVirality = (engageScore * shareRate * Math.log(views + 1)) / (creatorSizeFactor / estimatedAgeFactor);\n    const hashtagPerformance = (engageScore / Math.log(views + 1)) * (shars / (lik + coms + 1)) * Math.log(collect + 1);\n    const authorAveragePerformance = hearts / vids;\n    const videoPerformance = (lik + coms * 0.8 + shars * 1.5 + collect * 0.7);\n    const authorRelativeSuccess = videoPerformance / (authorAveragePerformance / 1000);\n    \n    // Fixed replicabilityScore formula to prevent zero values\n    const replicabilityScore = (engageScore * shareRate * Math.log(collect + 1) * 1000) / \n                              (Math.log(subs + 1) * Math.sqrt(vids + 1));\n    \n    // Return the output in the specified format\n    return {\n        video: {\n            caption: data.video.caption,\n            webVideoUrl: data.video.webVideoUrl\n        },\n        metrics: {\n            engageScore: engageScore,\n            shareRate: shareRate,\n            creatorSizeFactor: creatorSizeFactor,\n            authorEngagementRatio: authorEngagementRatio,\n            estimatedAgeFactor: estimatedAgeFactor,\n            rawVirality: rawVirality,\n            timeAdjustedVirality: timeAdjustedVirality,\n            hashtagPerformance: hashtagPerformance,\n            authorAveragePerformance: authorAveragePerformance,\n            videoPerformance: videoPerformance,\n            authorRelativeSuccess: authorRelativeSuccess,\n            replicabilityScore: replicabilityScore\n        }\n    };\n});\n\n// Return the processed items\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        2048
+      ],
+      "id": "0121bab9-d90a-47f1-93d4-01b370026ee1",
+      "name": "Maths"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1baf5d48-162b-45c9-8495-2c7fc6d46d6e",
+              "name": "video.caption",
+              "value": "={{ $json.video.caption }}",
+              "type": "string"
+            },
+            {
+              "id": "9c868d3b-be6c-4a7f-806d-381d0747ff8c",
+              "name": "video.webVideoUrl",
+              "value": "={{ $json.video.webVideoUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "b207855d-8ba1-4d52-94c3-49b6b80ea638",
+              "name": "video.coverUrl",
+              "value": "={{ $json.video.videoMeta.coverUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "63fb07ed-f192-4b9e-8608-24bb5338f00f",
+              "name": "video.diggCount",
+              "value": "={{ $json.video.diggCount }}",
+              "type": "number"
+            },
+            {
+              "id": "a76d4a5d-7ecf-46a1-8f17-4320e93e3a8f",
+              "name": "video.playCount",
+              "value": "={{ $json.video.playCount }}",
+              "type": "number"
+            },
+            {
+              "id": "8bd2e88a-2eba-4159-a5f5-ccf8f5fa7fac",
+              "name": "video.shareCount",
+              "value": "={{ $json.video.shareCount }}",
+              "type": "number"
+            },
+            {
+              "id": "c56b6a59-6f38-4533-8c92-ac116081ae2b",
+              "name": "video.commentCount",
+              "value": "={{ $json.video.commentCount }}",
+              "type": "number"
+            },
+            {
+              "id": "3bbd3f7d-f144-4e6c-8eb5-4e8e2327c419",
+              "name": "video.collectCount",
+              "value": "={{ $json.video.collectCount }}",
+              "type": "number"
+            },
+            {
+              "id": "52705ccf-2d47-4bdd-8c8f-f9a1a3cac5ef",
+              "name": "video.hashtags",
+              "value": "={{ $json.video.hashtags }}",
+              "type": "array"
+            },
+            {
+              "id": "07e7d73e-5746-4ddc-acf4-50dd9a944d4c",
+              "name": "author",
+              "value": "={{ $json.author.authorMeta }}",
+              "type": "object"
+            },
+            {
+              "id": "967bd457-8b8c-4496-9cd4-7f5e0b4dbc17",
+              "name": "music.musicName",
+              "value": "={{ $json.musicMeta.musicName }}",
+              "type": "string"
+            },
+            {
+              "id": "275a7f6c-2676-4484-973b-b2169146779f",
+              "name": "task",
+              "value": "={{ $json.task }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -304,
+        1760
+      ],
+      "id": "86ffc65b-ca04-4797-b605-9cb6d70127d0",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5e4f8cc9-2181-4ce3-b559-e1d441f5edd5",
+              "name": "metrics.engageScore",
+              "value": "={{ $json.metrics.engageScore }}",
+              "type": "number"
+            },
+            {
+              "id": "5da8c557-98a7-43a0-ae30-17833ee254dc",
+              "name": "metrics.shareRate",
+              "value": "={{ $json.metrics.shareRate }}",
+              "type": "number"
+            },
+            {
+              "id": "ad9f86d1-785e-4238-8f15-7272b25fe74b",
+              "name": "metrics.creatorSizeFactor",
+              "value": "={{ $json.metrics.creatorSizeFactor }}",
+              "type": "number"
+            },
+            {
+              "id": "158d1892-694e-45cf-8cc5-475d08e94597",
+              "name": "metrics.authorEngagementRatio",
+              "value": "={{ $json.metrics.authorEngagementRatio }}",
+              "type": "number"
+            },
+            {
+              "id": "25c79d6a-6ecd-498f-ab9c-995487218f0c",
+              "name": "metrics.estimatedAgeFactor",
+              "value": "={{ $json.metrics.estimatedAgeFactor }}",
+              "type": "number"
+            },
+            {
+              "id": "15a93cac-55d6-46dc-a55a-44d096f3f151",
+              "name": "metrics.rawVirality",
+              "value": "={{ $json.metrics.rawVirality }}",
+              "type": "number"
+            },
+            {
+              "id": "aa6382f0-7031-463b-a0c7-a37da29ca471",
+              "name": "metrics.timeAdjustedVirality",
+              "value": "={{ $json.metrics.timeAdjustedVirality }}",
+              "type": "number"
+            },
+            {
+              "id": "a3e9aec4-63be-4b41-9dae-f3e094cff042",
+              "name": "metrics.hashtagPerformance",
+              "value": "={{ $json.metrics.hashtagPerformance }}",
+              "type": "number"
+            },
+            {
+              "id": "7ac87a41-32a2-4c92-8536-5cc2eb78ef78",
+              "name": "metrics.authorAveragePerformance",
+              "value": "={{ $json.metrics.authorAveragePerformance }}",
+              "type": "number"
+            },
+            {
+              "id": "92c6f019-146b-4e60-9ddb-2b13eb16fe02",
+              "name": "metrics.videoPerformance",
+              "value": "={{ $json.metrics.videoPerformance }}",
+              "type": "number"
+            },
+            {
+              "id": "c8c097da-bc5e-4b6f-96f2-81310a8feeb2",
+              "name": "metrics.authorRelativeSuccess",
+              "value": "={{ $json.metrics.authorRelativeSuccess }}",
+              "type": "number"
+            },
+            {
+              "id": "c65aac4b-d346-4cf1-9450-901aafa6d7d9",
+              "name": "metrics.replicabilityScore",
+              "value": "={{ $json.metrics.replicabilityScore }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -304,
+        2032
+      ],
+      "id": "3fdfee78-2aea-47a0-8a13-4999150bdb54",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1YzSljmoBg_yMcHghe38Ruh_0YYtje_SMX92Z_Lk9JwM",
+          "mode": "list",
+          "cachedResultName": "HashtagAnalyzer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YzSljmoBg_yMcHghe38Ruh_0YYtje_SMX92Z_Lk9JwM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1052031975,
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YzSljmoBg_yMcHghe38Ruh_0YYtje_SMX92Z_Lk9JwM/edit#gid=1052031975"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Caption": "={{ $json.video.caption }}",
+            "Video URL": "={{ $json.video.webVideoUrl }}",
+            "Thumbnail": "={{ $json.video.coverUrl }}",
+            "Likes": "={{ $json.video.diggCount }}",
+            "PlayCount": "={{ $json.video.playCount }}",
+            "Share": "={{ $json.video.shareCount }}",
+            "Comments": "={{ $json.video.commentCount }}",
+            "Collect": "={{ $json.video.collectCount }}",
+            "All Hashtags": "={{ $json.video.hashtags }}",
+            "Author": "={{ $json.author.name }}",
+            "Author URL": "={{ $json.author.profileUrl }}",
+            "Subs": "={{ $json.author.fans }}",
+            "Hearts": "={{ $json.author.heart }}",
+            "Videos": "={{ $json.author.video }}",
+            "Music": "={{ $json.music.musicName }}",
+            "Engagement": "={{ $json.metrics.engageScore }}",
+            "ShareRate": "={{ $json.metrics.shareRate }}",
+            "SearchHashtag": "={{ $json.task.searchHashtag }}",
+            "Task Date/Time": "={{ $json.task.dateTime }}",
+            "SizeFactor": "={{ $json.metrics.creatorSizeFactor }}",
+            "AgeFactor": "={{ $json.metrics.estimatedAgeFactor }}",
+            "rawVirality": "={{ $json.metrics.rawVirality }}",
+            "timeVirality": "={{ $json.metrics.timeAdjustedVirality }}",
+            "hashtagPerfomance": "={{ $json.metrics.hashtagPerformance }}",
+            "authorAveragePerfomance": "={{ $json.metrics.authorAveragePerformance }}",
+            "videoPerfomance": "={{ $json.metrics.videoPerformance }}",
+            "authorRelativeSucces": "={{ $json.metrics.authorRelativeSuccess }}",
+            "Replacability": "={{ $json.metrics.replicabilityScore }}"
+          },
+          "matchingColumns": [
+            "Video URL"
+          ],
+          "schema": [
+            {
+              "id": "Task Date/Time",
+              "displayName": "Task Date/Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SearchHashtag",
+              "displayName": "SearchHashtag",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Caption",
+              "displayName": "Caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Thumbnail",
+              "displayName": "Thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PlayCount",
+              "displayName": "PlayCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Share",
+              "displayName": "Share",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comments",
+              "displayName": "Comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Collect",
+              "displayName": "Collect",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "All Hashtags",
+              "displayName": "All Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Author",
+              "displayName": "Author",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author URL",
+              "displayName": "Author URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Subs",
+              "displayName": "Subs",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hearts",
+              "displayName": "Hearts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Videos",
+              "displayName": "Videos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Music",
+              "displayName": "Music",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Engagement",
+              "displayName": "Engagement",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ShareRate",
+              "displayName": "ShareRate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SizeFactor",
+              "displayName": "SizeFactor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AgeFactor",
+              "displayName": "AgeFactor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "rawVirality",
+              "displayName": "rawVirality",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "timeVirality",
+              "displayName": "timeVirality",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "hashtagPerfomance",
+              "displayName": "hashtagPerfomance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "authorAveragePerfomance",
+              "displayName": "authorAveragePerfomance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "videoPerfomance",
+              "displayName": "videoPerfomance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "authorRelativeSucces",
+              "displayName": "authorRelativeSucces",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Replacability",
+              "displayName": "Replacability",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        1920
+      ],
+      "id": "ef8f8adb-5444-489d-806a-bde3ec360dba",
+      "name": "MainData2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8Wxg4hpm5io99oLJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -16,
+        1920
+      ],
+      "id": "27652c9f-4bf7-410b-8275-c57c11814ec5",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all input items\nconst inputItems = $input.all();\n\n// Process each item\nconst outputItems = inputItems.map(item => {\n    const data = item.json;\n    \n    // Extract metrics from input data\n    const lik = data.video.diggCount || 0;\n    const shars = data.video.shareCount || 0;\n    const views = data.video.playCount || 0;\n    const collect = data.video.collectCount || 0;\n    const coms = data.video.commentCount || 0;\n    const subs = data.author.authorMeta.fans || 0;\n    const hearts = data.author.authorMeta.heart || 0;\n    const vids = data.author.authorMeta.video || 0;\n    \n    // Calculate all metrics\n    const engageScore = (lik * 0.6) + (coms * 0.9) + (shars * 1.7) + (collect * 0.9);\n    const shareRate = Math.log(shars + 1) / Math.log(views + 1);\n    const creatorSizeFactor = Math.log(subs + 1) * Math.sqrt(vids + 1);\n    const authorEngagementRatio = (hearts / vids) / (subs + 1);\n    const estimatedAgeFactor = Math.log(views / (subs * authorEngagementRatio) + 1);\n    const rawVirality = (engageScore * shareRate * Math.log(views + 1)) / creatorSizeFactor;\n    const timeAdjustedVirality = (engageScore * shareRate * Math.log(views + 1)) / (creatorSizeFactor / estimatedAgeFactor);\n    const hashtagPerformance = (engageScore / Math.log(views + 1)) * (shars / (lik + coms + 1)) * Math.log(collect + 1);\n    const authorAveragePerformance = hearts / vids;\n    const videoPerformance = (lik + coms * 0.8 + shars * 1.5 + collect * 0.7);\n    const authorRelativeSuccess = videoPerformance / (authorAveragePerformance / 1000);\n    \n    // Fixed replicabilityScore formula to prevent zero values\n    const replicabilityScore = (engageScore * shareRate * Math.log(collect + 1) * 1000) / \n                              (Math.log(subs + 1) * Math.sqrt(vids + 1));\n    \n    // Return the output in the specified format\n    return {\n        video: {\n            caption: data.video.caption,\n            webVideoUrl: data.video.webVideoUrl\n        },\n        metrics: {\n            engageScore: engageScore,\n            shareRate: shareRate,\n            creatorSizeFactor: creatorSizeFactor,\n            authorEngagementRatio: authorEngagementRatio,\n            estimatedAgeFactor: estimatedAgeFactor,\n            rawVirality: rawVirality,\n            timeAdjustedVirality: timeAdjustedVirality,\n            hashtagPerformance: hashtagPerformance,\n            authorAveragePerformance: authorAveragePerformance,\n            videoPerformance: videoPerformance,\n            authorRelativeSuccess: authorRelativeSuccess,\n            replicabilityScore: replicabilityScore\n        }\n    };\n});\n\n// Return the processed items\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        3088
+      ],
+      "id": "6e9e4e86-781c-4b4c-bef5-2784279951e1",
+      "name": "Maths1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1baf5d48-162b-45c9-8495-2c7fc6d46d6e",
+              "name": "video.caption",
+              "value": "={{ $json.video.caption }}",
+              "type": "string"
+            },
+            {
+              "id": "9c868d3b-be6c-4a7f-806d-381d0747ff8c",
+              "name": "video.webVideoUrl",
+              "value": "={{ $json.video.webVideoUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "b207855d-8ba1-4d52-94c3-49b6b80ea638",
+              "name": "video.coverUrl",
+              "value": "={{ $json.video.videoMeta.coverUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "63fb07ed-f192-4b9e-8608-24bb5338f00f",
+              "name": "video.diggCount",
+              "value": "={{ $json.video.diggCount }}",
+              "type": "number"
+            },
+            {
+              "id": "a76d4a5d-7ecf-46a1-8f17-4320e93e3a8f",
+              "name": "video.playCount",
+              "value": "={{ $json.video.playCount }}",
+              "type": "number"
+            },
+            {
+              "id": "8bd2e88a-2eba-4159-a5f5-ccf8f5fa7fac",
+              "name": "video.shareCount",
+              "value": "={{ $json.video.shareCount }}",
+              "type": "number"
+            },
+            {
+              "id": "c56b6a59-6f38-4533-8c92-ac116081ae2b",
+              "name": "video.commentCount",
+              "value": "={{ $json.video.commentCount }}",
+              "type": "number"
+            },
+            {
+              "id": "3bbd3f7d-f144-4e6c-8eb5-4e8e2327c419",
+              "name": "video.collectCount",
+              "value": "={{ $json.video.collectCount }}",
+              "type": "number"
+            },
+            {
+              "id": "52705ccf-2d47-4bdd-8c8f-f9a1a3cac5ef",
+              "name": "video.hashtags",
+              "value": "={{ $json.video.hashtags }}",
+              "type": "array"
+            },
+            {
+              "id": "07e7d73e-5746-4ddc-acf4-50dd9a944d4c",
+              "name": "author",
+              "value": "={{ $json.author.authorMeta }}",
+              "type": "object"
+            },
+            {
+              "id": "967bd457-8b8c-4496-9cd4-7f5e0b4dbc17",
+              "name": "music.musicName",
+              "value": "={{ $json.musicMeta.musicName }}",
+              "type": "string"
+            },
+            {
+              "id": "275a7f6c-2676-4484-973b-b2169146779f",
+              "name": "task",
+              "value": "={{ $json.task }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        2560
+      ],
+      "id": "6d4505c1-fc03-43e8-9391-c707c4cf6c9a",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5e4f8cc9-2181-4ce3-b559-e1d441f5edd5",
+              "name": "metrics.engageScore",
+              "value": "={{ $json.metrics.engageScore }}",
+              "type": "number"
+            },
+            {
+              "id": "5da8c557-98a7-43a0-ae30-17833ee254dc",
+              "name": "metrics.shareRate",
+              "value": "={{ $json.metrics.shareRate }}",
+              "type": "number"
+            },
+            {
+              "id": "ad9f86d1-785e-4238-8f15-7272b25fe74b",
+              "name": "metrics.creatorSizeFactor",
+              "value": "={{ $json.metrics.creatorSizeFactor }}",
+              "type": "number"
+            },
+            {
+              "id": "158d1892-694e-45cf-8cc5-475d08e94597",
+              "name": "metrics.authorEngagementRatio",
+              "value": "={{ $json.metrics.authorEngagementRatio }}",
+              "type": "number"
+            },
+            {
+              "id": "25c79d6a-6ecd-498f-ab9c-995487218f0c",
+              "name": "metrics.estimatedAgeFactor",
+              "value": "={{ $json.metrics.estimatedAgeFactor }}",
+              "type": "number"
+            },
+            {
+              "id": "15a93cac-55d6-46dc-a55a-44d096f3f151",
+              "name": "metrics.rawVirality",
+              "value": "={{ $json.metrics.rawVirality }}",
+              "type": "number"
+            },
+            {
+              "id": "aa6382f0-7031-463b-a0c7-a37da29ca471",
+              "name": "metrics.timeAdjustedVirality",
+              "value": "={{ $json.metrics.timeAdjustedVirality }}",
+              "type": "number"
+            },
+            {
+              "id": "a3e9aec4-63be-4b41-9dae-f3e094cff042",
+              "name": "metrics.hashtagPerformance",
+              "value": "={{ $json.metrics.hashtagPerformance }}",
+              "type": "number"
+            },
+            {
+              "id": "7ac87a41-32a2-4c92-8536-5cc2eb78ef78",
+              "name": "metrics.authorAveragePerformance",
+              "value": "={{ $json.metrics.authorAveragePerformance }}",
+              "type": "number"
+            },
+            {
+              "id": "92c6f019-146b-4e60-9ddb-2b13eb16fe02",
+              "name": "metrics.videoPerformance",
+              "value": "={{ $json.metrics.videoPerformance }}",
+              "type": "number"
+            },
+            {
+              "id": "c8c097da-bc5e-4b6f-96f2-81310a8feeb2",
+              "name": "metrics.authorRelativeSuccess",
+              "value": "={{ $json.metrics.authorRelativeSuccess }}",
+              "type": "number"
+            },
+            {
+              "id": "c65aac4b-d346-4cf1-9450-901aafa6d7d9",
+              "name": "metrics.replicabilityScore",
+              "value": "={{ $json.metrics.replicabilityScore }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -272,
+        3088
+      ],
+      "id": "15d87dff-1a6c-4fa1-8a53-c87d2a669a11",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        208,
+        2800
+      ],
+      "id": "3dbddf0b-0410-43f4-90e0-92df863d0f55",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1YzSljmoBg_yMcHghe38Ruh_0YYtje_SMX92Z_Lk9JwM",
+          "mode": "list",
+          "cachedResultName": "HashtagAnalyzer",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YzSljmoBg_yMcHghe38Ruh_0YYtje_SMX92Z_Lk9JwM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1052031975,
+          "mode": "list",
+          "cachedResultName": "Videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YzSljmoBg_yMcHghe38Ruh_0YYtje_SMX92Z_Lk9JwM/edit#gid=1052031975"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Caption": "={{ $json.video.caption }}",
+            "Video URL": "={{ $json.video.webVideoUrl }}",
+            "Thumbnail": "={{ $json.video.coverUrl }}",
+            "Likes": "={{ $json.video.diggCount }}",
+            "PlayCount": "={{ $json.video.playCount }}",
+            "Share": "={{ $json.video.shareCount }}",
+            "Comments": "={{ $json.video.commentCount }}",
+            "Collect": "={{ $json.video.collectCount }}",
+            "All Hashtags": "={{ $json.video.hashtags }}",
+            "Author": "={{ $json.author.name }}",
+            "Author URL": "={{ $json.author.profileUrl }}",
+            "Subs": "={{ $json.author.fans }}",
+            "Hearts": "={{ $json.author.heart }}",
+            "Videos": "={{ $json.author.video }}",
+            "Music": "={{ $json.music.musicName }}",
+            "Engagement": "={{ $json.metrics.engageScore }}",
+            "ShareRate": "={{ $json.metrics.shareRate }}",
+            "SearchHashtag": "={{ $json.task.searchHashtag }}",
+            "Task Date/Time": "={{ $json.task.dateTime }}",
+            "SizeFactor": "={{ $json.metrics.creatorSizeFactor }}",
+            "AgeFactor": "={{ $json.metrics.estimatedAgeFactor }}",
+            "rawVirality": "={{ $json.metrics.rawVirality }}",
+            "timeVirality": "={{ $json.metrics.timeAdjustedVirality }}",
+            "hashtagPerfomance": "={{ $json.metrics.hashtagPerformance }}",
+            "authorAveragePerfomance": "={{ $json.metrics.authorAveragePerformance }}",
+            "videoPerfomance": "={{ $json.metrics.videoPerformance }}",
+            "authorRelativeSucces": "={{ $json.metrics.authorRelativeSuccess }}",
+            "Replacability": "={{ $json.metrics.replicabilityScore }}"
+          },
+          "matchingColumns": [
+            "Video URL"
+          ],
+          "schema": [
+            {
+              "id": "Task Date/Time",
+              "displayName": "Task Date/Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SearchHashtag",
+              "displayName": "SearchHashtag",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Caption",
+              "displayName": "Caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Video URL",
+              "displayName": "Video URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Thumbnail",
+              "displayName": "Thumbnail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Likes",
+              "displayName": "Likes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "PlayCount",
+              "displayName": "PlayCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Share",
+              "displayName": "Share",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Comments",
+              "displayName": "Comments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Collect",
+              "displayName": "Collect",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "All Hashtags",
+              "displayName": "All Hashtags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Author",
+              "displayName": "Author",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Author URL",
+              "displayName": "Author URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Subs",
+              "displayName": "Subs",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hearts",
+              "displayName": "Hearts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Videos",
+              "displayName": "Videos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Music",
+              "displayName": "Music",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Engagement",
+              "displayName": "Engagement",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ShareRate",
+              "displayName": "ShareRate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SizeFactor",
+              "displayName": "SizeFactor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AgeFactor",
+              "displayName": "AgeFactor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "rawVirality",
+              "displayName": "rawVirality",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "timeVirality",
+              "displayName": "timeVirality",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "hashtagPerfomance",
+              "displayName": "hashtagPerfomance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "authorAveragePerfomance",
+              "displayName": "authorAveragePerfomance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "videoPerfomance",
+              "displayName": "videoPerfomance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "authorRelativeSucces",
+              "displayName": "authorRelativeSucces",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Replacability",
+              "displayName": "Replacability",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        2800
+      ],
+      "id": "fc3b4701-2a02-4303-b3ac-a0005c1559e7",
+      "name": "MainData",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8Wxg4hpm5io99oLJ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all input items\nconst inputItems = $input.all();\n\n// Process each item\nconst outputItems = inputItems.map(item => {\n    const data = item.json;\n    \n    // Extract metrics from input data\n    const lik = data.video.diggCount || 0;\n    const shars = data.video.shareCount || 0;\n    const views = data.video.playCount || 0;\n    const collect = data.video.collectCount || 0;\n    const coms = data.video.commentCount || 0;\n    const subs = data.author.authorMeta.fans || 0;\n    const hearts = data.author.authorMeta.heart || 0;\n    const vids = data.author.authorMeta.video || 0;\n    \n    // Calculate all metrics\n    const engageScore = (lik * 0.6) + (coms * 0.9) + (shars * 1.7) + (collect * 0.9);\n    const shareRate = Math.log(shars + 1) / Math.log(views + 1);\n    const creatorSizeFactor = Math.log(subs + 1) * Math.sqrt(vids + 1);\n    const authorEngagementRatio = (hearts / vids) / (subs + 1);\n    const estimatedAgeFactor = Math.log(views / (subs * authorEngagementRatio) + 1);\n    const rawVirality = (engageScore * shareRate * Math.log(views + 1)) / creatorSizeFactor;\n    const timeAdjustedVirality = (engageScore * shareRate * Math.log(views + 1)) / (creatorSizeFactor / estimatedAgeFactor);\n    const hashtagPerformance = (engageScore / Math.log(views + 1)) * (shars / (lik + coms + 1)) * Math.log(collect + 1);\n    const authorAveragePerformance = hearts / vids;\n    const videoPerformance = (lik + coms * 0.8 + shars * 1.5 + collect * 0.7);\n    const authorRelativeSuccess = videoPerformance / (authorAveragePerformance / 1000);\n    \n    // Fixed replicabilityScore formula to prevent zero values\n    const replicabilityScore = (engageScore * shareRate * Math.log(collect + 1) * 1000) / \n                              (Math.log(subs + 1) * Math.sqrt(vids + 1));\n    \n    // Return the output in the specified format\n    return {\n        video: {\n            caption: data.video.caption,\n            webVideoUrl: data.video.webVideoUrl\n        },\n        metrics: {\n            engageScore: engageScore,\n            shareRate: shareRate,\n            creatorSizeFactor: creatorSizeFactor,\n            authorEngagementRatio: authorEngagementRatio,\n            estimatedAgeFactor: estimatedAgeFactor,\n            rawVirality: rawVirality,\n            timeAdjustedVirality: timeAdjustedVirality,\n            hashtagPerformance: hashtagPerformance,\n            authorAveragePerformance: authorAveragePerformance,\n            videoPerformance: videoPerformance,\n            authorRelativeSuccess: authorRelativeSuccess,\n            replicabilityScore: replicabilityScore\n        }\n    };\n});\n\n// Return the processed items\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -592,
+        1216
+      ],
+      "id": "1c21d9c3-ca78-4a26-8703-b92d9caaf73c",
+      "name": "Maths2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1baf5d48-162b-45c9-8495-2c7fc6d46d6e",
+              "name": "video.caption",
+              "value": "={{ $json.video.caption }}",
+              "type": "string"
+            },
+            {
+              "id": "9c868d3b-be6c-4a7f-806d-381d0747ff8c",
+              "name": "video.webVideoUrl",
+              "value": "={{ $json.video.webVideoUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "b207855d-8ba1-4d52-94c3-49b6b80ea638",
+              "name": "video.coverUrl",
+              "value": "={{ $json.video.videoMeta.coverUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "63fb07ed-f192-4b9e-8608-24bb5338f00f",
+              "name": "video.diggCount",
+              "value": "={{ $json.video.diggCount }}",
+              "type": "number"
+            },
+            {
+              "id": "a76d4a5d-7ecf-46a1-8f17-4320e93e3a8f",
+              "name": "video.playCount",
+              "value": "={{ $json.video.playCount }}",
+              "type": "number"
+            },
+            {
+              "id": "8bd2e88a-2eba-4159-a5f5-ccf8f5fa7fac",
+              "name": "video.shareCount",
+              "value": "={{ $json.video.shareCount }}",
+              "type": "number"
+            },
+            {
+              "id": "c56b6a59-6f38-4533-8c92-ac116081ae2b",
+              "name": "video.commentCount",
+              "value": "={{ $json.video.commentCount }}",
+              "type": "number"
+            },
+            {
+              "id": "3bbd3f7d-f144-4e6c-8eb5-4e8e2327c419",
+              "name": "video.collectCount",
+              "value": "={{ $json.video.collectCount }}",
+              "type": "number"
+            },
+            {
+              "id": "52705ccf-2d47-4bdd-8c8f-f9a1a3cac5ef",
+              "name": "video.hashtags",
+              "value": "={{ $json.video.hashtags }}",
+              "type": "array"
+            },
+            {
+              "id": "07e7d73e-5746-4ddc-acf4-50dd9a944d4c",
+              "name": "author",
+              "value": "={{ $json.author.authorMeta }}",
+              "type": "object"
+            },
+            {
+              "id": "967bd457-8b8c-4496-9cd4-7f5e0b4dbc17",
+              "name": "music.musicName",
+              "value": "={{ $json.musicMeta.musicName }}",
+              "type": "string"
+            },
+            {
+              "id": "275a7f6c-2676-4484-973b-b2169146779f",
+              "name": "task",
+              "value": "={{ $json.task }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -352,
+        1024
+      ],
+      "id": "134c0bf6-86ac-46a8-b28d-d199a866fab2",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5e4f8cc9-2181-4ce3-b559-e1d441f5edd5",
+              "name": "metrics.engageScore",
+              "value": "={{ $json.metrics.engageScore }}",
+              "type": "number"
+            },
+            {
+              "id": "5da8c557-98a7-43a0-ae30-17833ee254dc",
+              "name": "metrics.shareRate",
+              "value": "={{ $json.metrics.shareRate }}",
+              "type": "number"
+            },
+            {
+              "id": "ad9f86d1-785e-4238-8f15-7272b25fe74b",
+              "name": "metrics.creatorSizeFactor",
+              "value": "={{ $json.metrics.creatorSizeFactor }}",
+              "type": "number"
+            },
+            {
+              "id": "158d1892-694e-45cf-8cc5-475d08e94597",
+              "name": "metrics.authorEngagementRatio",
+              "value": "={{ $json.metrics.authorEngagementRatio }}",
+              "type": "number"
+            },
+            {
+              "id": "25c79d6a-6ecd-498f-ab9c-995487218f0c",
+              "name": "metrics.estimatedAgeFactor",
+              "value": "={{ $json.metrics.estimatedAgeFactor }}",
+              "type": "number"
+            },
+            {
+              "id": "15a93cac-55d6-46dc-a55a-44d096f3f151",
+              "name": "metrics.rawVirality",
+              "value": "={{ $json.metrics.rawVirality }}",
+              "type": "number"
+            },
+            {
+              "id": "aa6382f0-7031-463b-a0c7-a37da29ca471",
+              "name": "metrics.timeAdjustedVirality",
+              "value": "={{ $json.metrics.timeAdjustedVirality }}",
+              "type": "number"
+            },
+            {
+              "id": "a3e9aec4-63be-4b41-9dae-f3e094cff042",
+              "name": "metrics.hashtagPerformance",
+              "value": "={{ $json.metrics.hashtagPerformance }}",
+              "type": "number"
+            },
+            {
+              "id": "7ac87a41-32a2-4c92-8536-5cc2eb78ef78",
+              "name": "metrics.authorAveragePerformance",
+              "value": "={{ $json.metrics.authorAveragePerformance }}",
+              "type": "number"
+            },
+            {
+              "id": "92c6f019-146b-4e60-9ddb-2b13eb16fe02",
+              "name": "metrics.videoPerformance",
+              "value": "={{ $json.metrics.videoPerformance }}",
+              "type": "number"
+            },
+            {
+              "id": "c8c097da-bc5e-4b6f-96f2-81310a8feeb2",
+              "name": "metrics.authorRelativeSuccess",
+              "value": "={{ $json.metrics.authorRelativeSuccess }}",
+              "type": "number"
+            },
+            {
+              "id": "c65aac4b-d346-4cf1-9450-901aafa6d7d9",
+              "name": "metrics.replicabilityScore",
+              "value": "={{ $json.metrics.replicabilityScore }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        1216
+      ],
+      "id": "b605e7b9-7c84-4105-bb96-ecc425fded97",
+      "name": "Edit Fields7"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -192,
+        1088
+      ],
+      "id": "44096a47-2915-449d-b78e-5e3d8c81125c",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {
+        "chatId": "481869952",
+        "text": "=Готово! :)",
+        "replyMarkup": "forceReply",
+        "forceReply": {},
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        896
+      ],
+      "id": "d13f3205-f93b-4baa-8570-ac9f4ff48760",
+      "name": "Send a text message1",
+      "webhookId": "faea0fbc-30f6-4220-8f59-27fb5288b0d5",
+      "credentials": {
+        "telegramApi": {
+          "id": "jq34N7lrc5lInbfO",
+          "name": "AyoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "481869952",
+        "text": "=Готово! :)",
+        "replyMarkup": "forceReply",
+        "forceReply": {},
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        304,
+        1920
+      ],
+      "id": "56e9bced-3671-4210-ae1f-c9ef81bcc2f6",
+      "name": "Send a text message2",
+      "webhookId": "faea0fbc-30f6-4220-8f59-27fb5288b0d5",
+      "credentials": {
+        "telegramApi": {
+          "id": "jq34N7lrc5lInbfO",
+          "name": "AyoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "481869952",
+        "text": "=Готово! :)",
+        "replyMarkup": "forceReply",
+        "forceReply": {},
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        528,
+        2800
+      ],
+      "id": "a21074f4-f9ce-4603-a2d7-9653b78ecfbd",
+      "name": "Send a text message3",
+      "webhookId": "faea0fbc-30f6-4220-8f59-27fb5288b0d5",
+      "credentials": {
+        "telegramApi": {
+          "id": "jq34N7lrc5lInbfO",
+          "name": "AyoBot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Запись выбранного датасета в Hashtag Ananlyzer GoogleSheets "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -720,
+        1824
+      ],
+      "typeVersion": 1,
+      "id": "fa7210d5-7dcb-4e08-8e13-82fe4d5b8669",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Запуск нового задания и запись полученного датасета в Hashtag Ananlyzer GoogleSheets "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -496,
+        2800
+      ],
+      "typeVersion": 1,
+      "id": "7772cd08-08bc-4afc-bbdd-63fb82482306",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -864,
+        2720
+      ],
+      "id": "cc234c91-51a9-454a-a830-5f49475c0592",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "TG Bot => tags => apify task body"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -864,
+        2560
+      ],
+      "typeVersion": 1,
+      "id": "1f3e9da3-15f4-47ad-a4b0-6447e0870151",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "Список сохраненных датасетов для последующего использованяи в командах ",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1264,
+        800
+      ],
+      "typeVersion": 1,
+      "id": "2ec30547-2f30-4d95-b577-24ecebb5fc1d",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2016,
+        1632
+      ],
+      "id": "ff1321aa-4498-4b12-9f70-efda29708ae5",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "content": "Плейсхолдер для агента"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1968,
+        2576
+      ],
+      "typeVersion": 1,
+      "id": "25016ab4-c4e2-425d-a7ca-e3135a98b875",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Check ID (Security)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Command Switch": {
+      "main": [
+        [
+          {
+            "node": "Appify Get IDs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call Get Dataset",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call Get Dataset1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Greeting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ApifyTask": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Maths1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check ID (Security)": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Access Forbidden",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appify Get IDs": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send Datasets IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Get Dataset": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Maths2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Get Dataset1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Maths",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Maths": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "MainData2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Maths1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "MainData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Maths2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields7": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MainData2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MainData": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "ApifyTask",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Command Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "e5a8193e-eba6-47b7-a98c-8c7979080aa9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b943184095dfc4d4d319344736df6581b096cb6f38c83812941bcbebc032125d"
+  },
+  "id": "UsDcUnUDWYxqWjLm",
+  "tags": []
+}
